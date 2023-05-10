@@ -3,13 +3,6 @@ from women.models import *
 
 register = template.Library()
 
-# @register.simple_tag(name='getcats')
-# def get_categories(filter=None):
-#     if not filter:
-#         return Category.objects.all()
-#     else:
-#         return Category.objects.filter(pk=filter)
-
 @register.inclusion_tag('women/nav_menu.html')
 def show_nav_menu():
     menu = [

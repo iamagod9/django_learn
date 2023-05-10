@@ -15,10 +15,10 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'women/about.html', {'title': 'About me'})
+    return render(request, 'women/about.html', {'title': 'О сайте'})
 
 def addpage(request):
-    return HttpResponse('Complete!')
+    return render(request, 'women/addpage.html', {'title': 'Добавление статьи'})
 
 def contact(request):
     return HttpResponse('Complete!')
@@ -26,27 +26,24 @@ def contact(request):
 def login(request):
     return HttpResponse('Complete!')
 
-def show_post(request, post_id):
-    post = get_object_or_404(Women, pk=post_id)
+def show_post(request, post_slug):
+    post = get_object_or_404(Women, slug=post_slug)
 
     context = {
-        'posts': post,
+        'post': post,
         'title': post.title,
-        'cat_selected': 1,
+        'cat_selected': post.cat_id,
     }
 
     return render(request, 'women/post.html', context=context)
 
 
-def show_category(request, cat_id):
-    posts = Women.objects.filter(cat_id=cat_id)
-
-    if len(posts) == 0:
-        raise Http404()
+def show_category(request, cat_slug):
+    posts = Women.objects.filter(cat__slug=cat_slug)
 
     context = {
         'posts': posts,
         'title': 'Отображение по рубрикам',
-        'cat_selected': cat_id,
+        'cat_selected': cat_slug,
     }
     return render(request, 'women/index.html', context=context)
