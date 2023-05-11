@@ -1,18 +1,40 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
 
 from .forms import *
 from .models import *
 
-def index(request):
-    posts = Women.objects.all()
+# def index(request):
+#     posts = Women.objects.all()
+#
+#     context = {
+#         'posts': posts,
+#         'title': 'Main page',
+#         'cat_selected': 0,
+#     }
+#     return render(request, 'women/index.html', context=context)
 
-    context = {
-        'posts': posts,
-        'title': 'Main page',
-        'cat_selected': 0,
-    }
-    return render(request, 'women/index.html', context=context)
+menu = [
+    {'title': 'О сайте', 'url_name': 'about'},
+    {'title': 'Добавить статью', 'url_name': 'add_page'},
+    {'title': 'Обратная связь', 'url_name': 'contact'},
+    {'title': 'Войти', 'url_name': 'login'},
+]
+class WomenHome(ListView):
+    model = Women
+    template_name = 'women/index.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = menu
+        context['title'] = 'Главная страница'
+        context['cat_selected'] = 0
+        return context
+
+    def get_queryset(self):
+        return Women.objects.filter(is_published=True)
 
 
 def about(request):
@@ -20,13 +42,10 @@ def about(request):
 
 def addpage(request):
     if request.method == 'POST':
-        form = AddPostForm(request.POST)
+        form = AddPostForm(request.POST, request.FILES )
         if form.is_valid():
-            try:
-                Women.objects.create(**form.cleaned_data)
+                form.save()
                 return redirect('home')
-            except:
-                form.add_error(None, 'Ошибка добавления статьи')
     else:
         form = AddPostForm()
     return render(request, 'women/addpage.html', {'form': form, 'title': 'Добавление статьи'})
