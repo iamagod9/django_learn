@@ -16,14 +16,12 @@
 		<div class="header">
 			<ul id="mainmenu" class="mainmenu">
 			<li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
-{#{% show_nav_menu %}#}
                 {% for m in menu %}
-                    {% if not forloop.last %}
-                            <li><a href="{% url m.url_name %}">{{m.title}}</a></li>
-                    {% else %}
-                            <li class="last"><a href="http://127.0.0.1:8000/admin">{{m.title}}</a></li>
-                    {% endif %}
+                    <li><a href="{% url m.url_name %}">{{m.title}}</a></li>
                 {% endfor %}
+                <li class="last">
+                    <a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a>
+                </li>
 			</ul>
 			<div class="clear"></div>
 		</div>
